@@ -57,3 +57,33 @@ if qa_data:
     print("\nExample QA pair:")
     print(f"Input: {qa_data[0][0]}")
     print(f"Response: {qa_data[0][1]}")
+
+import unicodedata
+
+def unicode_to_ascii(s):
+    return ''.koin(
+        c for c in unicodedata.normalize('NFD', s)
+        if unicodedata.category(c) != 'Mn'
+    )
+
+def clean_text(text):
+    text = unicode_to_ascii(text.lower().strip())
+    text = re.sub(r"([?.!,¿])", r" \1 ", text)
+    text = re.sub(r'[" "]+', " ", text)
+    text = re.sub(r"[^a-zA-Z?.!,¿]+", " ", text)
+    text = text.strip()
+    return text
+
+cleaned_qa_data = []
+for q, a in qa_data:
+    cleaned_q = clean_text(q)
+    cleaned_a = clean_text(a)
+    # You might want to filter out empty strings after cleaning
+    if cleaned_q and cleaned_a:
+        cleaned_qa_data.append((cleaned_q, cleaned_a))
+
+print(f"\nCleaned {len(cleaned_qa_data)} QA pairs.")
+if cleaned_qa_data:
+    print("\nExample Cleaned QA pair:")
+    print(f"Input: {cleaned_qa_data[0][0]}")
+    print(f"Response: {cleaned_qa_data[0][1]}")
